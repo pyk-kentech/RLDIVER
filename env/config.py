@@ -122,7 +122,7 @@ FISH_CONFIG = [
     {
         "id": 4,
         "name": "Deep Tuna",
-        "position": (7, 8),
+        "position": (6, 10),
         "health": 6,
         "aggression": 0.50,
         "attack_damage": 8,
@@ -132,7 +132,7 @@ FISH_CONFIG = [
     {
         "id": 5,
         "name": "Abyss Shark",
-        "position": (5, 6),
+        "position": (1, 4),
         "health": 7,
         "aggression": 0.60,
         "attack_damage": 10,
