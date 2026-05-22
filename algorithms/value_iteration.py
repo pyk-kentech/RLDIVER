@@ -5,13 +5,13 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Tuple
 
-from davethediver_rl.env.config import (
+from env.config import (
     ACTIONS,
     GAMMA,
     VALUE_ITERATION_MAX_ITERATIONS,
     VALUE_ITERATION_THETA,
 )
-from davethediver_rl.env.underwater_env import State
+from env.underwater_env import State
 
 VTable = DefaultDict[State, float]
 Policy = Dict[State, int]

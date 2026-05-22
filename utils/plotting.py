@@ -8,7 +8,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 import matplotlib.pyplot as plt
 import numpy as np
 
-from davethediver_rl.env.config import (
+from env.config import (
     ACTION_CATCH,
     ACTION_DOWN,
     ACTION_LEFT,
@@ -25,7 +25,7 @@ from davethediver_rl.env.config import (
     OBSTACLES,
     START_POS,
 )
-from davethediver_rl.utils.io_utils import ensure_dir
+from utils.io_utils import ensure_dir
 
 
 ACTION_SYMBOLS = {

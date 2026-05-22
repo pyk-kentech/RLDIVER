@@ -38,7 +38,7 @@ The project requires Python with `numpy`, `matplotlib`, `pandas`, and `tqdm`.
 
 ## Run Instructions
 
-Run commands from the `davethediver_rl` directory:
+Run commands from the `RLDIVER` directory:
 
 ```bash
 python main.py --mode value_iteration

@@ -14,8 +14,8 @@ from typing import Dict, Iterable, List, Mapping, Optional, Sequence
 
 import numpy as np
 
-from davethediver_rl.env.config import NUM_ACTIONS
-from davethediver_rl.env.underwater_env import State
+from env.config import NUM_ACTIONS
+from env.underwater_env import State
 
 
 def _normalize_valid_actions(valid_actions: Sequence[int]) -> List[int]:

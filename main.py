@@ -14,11 +14,11 @@ import pandas as pd
 if __package__ is None or __package__ == "":
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from davethediver_rl.algorithms.q_learning import train_q_learning
-from davethediver_rl.algorithms.sarsa import train_sarsa
-from davethediver_rl.algorithms.value_iteration import value_iteration
-from davethediver_rl.env import UnderwaterFishingEnv
-from davethediver_rl.env.config import (
+from algorithms.q_learning import train_q_learning
+from algorithms.sarsa import train_sarsa
+from algorithms.value_iteration import value_iteration
+from env import UnderwaterFishingEnv
+from env.config import (
     ALPHA,
     EPSILON_DECAY,
     EVAL_EPISODES,
@@ -37,10 +37,10 @@ from davethediver_rl.env.config import (
     VALUE_ITERATION_MAX_ITERATIONS,
     VALUE_ITERATION_THETA,
 )
-from davethediver_rl.env.underwater_env import State
-from davethediver_rl.utils.evaluation import evaluate_policy, rollout_episode
-from davethediver_rl.utils.io_utils import ensure_dir, load_pickle, save_csv, save_pickle
-from davethediver_rl.utils.plotting import (
+from env.underwater_env import State
+from utils.evaluation import evaluate_policy, rollout_episode
+from utils.io_utils import ensure_dir, load_pickle, save_csv, save_pickle
+from utils.plotting import (
     plot_death_rate_curve,
     plot_oxygen_time_curve,
     plot_policy_map,
@@ -49,7 +49,7 @@ from davethediver_rl.utils.plotting import (
     plot_training_reward_curve,
     plot_trajectory,
 )
-from davethediver_rl.utils.policy import greedy_action_from_policy, greedy_action_from_q, q_to_policy
+from utils.policy import greedy_action_from_policy, greedy_action_from_q, q_to_policy
 
 
 PROJECT_DIR = Path(__file__).resolve().parent

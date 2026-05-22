@@ -8,7 +8,7 @@ from typing import Any, DefaultDict, Dict, List, Tuple
 
 import numpy as np
 
-from davethediver_rl.env.config import (
+from env.config import (
     ALPHA,
     EPSILON_DECAY,
     GAMMA,
@@ -18,8 +18,8 @@ from davethediver_rl.env.config import (
     RANDOM_SEED,
     TRAIN_EPISODES,
 )
-from davethediver_rl.env.underwater_env import State
-from davethediver_rl.utils.policy import epsilon_greedy_action
+from env.underwater_env import State
+from utils.policy import epsilon_greedy_action
 
 random.seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)

@@ -13,8 +13,8 @@ from typing import Any, Callable, Dict, List, Optional, Sequence
 
 import numpy as np
 
-from davethediver_rl.env.config import EVAL_EPISODES
-from davethediver_rl.env.underwater_env import State
+from env.config import EVAL_EPISODES
+from env.underwater_env import State
 
 PolicyFn = Callable[[State, Sequence[int]], int]
 
