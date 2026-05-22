@@ -72,6 +72,7 @@ def run_value_iteration(args: argparse.Namespace) -> None:
         gamma=args.gamma,
         theta=args.theta,
         max_iterations=args.max_iterations,
+        show_progress=args.show_progress,
     )
 
     save_pickle(V, RESULTS_DIR / "value_iteration_values.pkl")
@@ -93,6 +94,7 @@ def run_train_sarsa(args: argparse.Namespace) -> None:
         gamma=args.gamma,
         epsilon=args.epsilon,
         epsilon_decay=args.epsilon_decay,
+        show_progress=args.show_progress,
     )
     policy = q_to_policy(Q, env, states=_representative_policy_states())
 
@@ -115,6 +117,7 @@ def run_train_q_learning(args: argparse.Namespace) -> None:
         gamma=args.gamma,
         epsilon=args.epsilon,
         epsilon_decay=args.epsilon_decay,
+        show_progress=args.show_progress,
     )
     policy = q_to_policy(Q, env, states=_representative_policy_states())
 
@@ -182,10 +185,15 @@ def run_plot(args: argparse.Namespace) -> None:
 def run_all(args: argparse.Namespace) -> None:
     """Run Value Iteration, SARSA, Q-learning, evaluation, and plotting."""
 
+    print("[1/5] Running Value Iteration")
     run_value_iteration(args)
+    print("[2/5] Training SARSA")
     run_train_sarsa(args)
+    print("[3/5] Training Q-learning")
     run_train_q_learning(args)
+    print("[4/5] Evaluating policies")
     run_evaluate(args)
+    print("[5/5] Generating plots")
     run_plot(args)
 
 
@@ -371,6 +379,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--theta", type=float, default=VALUE_ITERATION_THETA)
     parser.add_argument("--max_iterations", type=int, default=VALUE_ITERATION_MAX_ITERATIONS)
     parser.add_argument("--seed", type=int, default=RANDOM_SEED)
+    parser.add_argument(
+        "--no_progress",
+        dest="show_progress",
+        action="store_false",
+        help="Disable tqdm progress bars.",
+    )
+    parser.set_defaults(show_progress=True)
     return parser.parse_args()
 
 

@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List, Tuple
 
 import numpy as np
+from tqdm import trange
 
 from env.config import (
     ALPHA,
@@ -44,6 +45,7 @@ def train_sarsa(
     gamma: float = GAMMA,
     epsilon: float = INITIAL_EPSILON,
     epsilon_decay: float = EPSILON_DECAY,
+    show_progress: bool = True,
 ) -> Tuple[QTable, List[Dict[str, Any]]]:
     """Train a sparse tabular SARSA agent.
 
@@ -54,7 +56,15 @@ def train_sarsa(
     Q: QTable = defaultdict(_new_q_values)
     training_log: List[Dict[str, Any]] = []
 
-    for episode in range(1, episodes + 1):
+    episode_iter = trange(
+        1,
+        episodes + 1,
+        desc="SARSA",
+        unit="episode",
+        disable=not show_progress,
+    )
+
+    for episode in episode_iter:
         state = env.reset()
         valid_actions = env.get_valid_actions(state)
         action = epsilon_greedy_action(Q, state, valid_actions, epsilon)
@@ -106,6 +116,14 @@ def train_sarsa(
         )
 
         epsilon = max(MIN_EPSILON, epsilon * epsilon_decay)
+
+        if show_progress:
+            episode_iter.set_postfix(
+                reward=f"{total_reward:.1f}",
+                epsilon=f"{epsilon:.3f}",
+                states=len(Q),
+                terminal=terminal_reason,
+            )
 
     return Q, training_log
 

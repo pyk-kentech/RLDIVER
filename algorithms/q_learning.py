@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List, Tuple
 
 import numpy as np
+from tqdm import trange
 
 from env.config import (
     ALPHA,
@@ -44,6 +45,7 @@ def train_q_learning(
     gamma: float = GAMMA,
     epsilon: float = INITIAL_EPSILON,
     epsilon_decay: float = EPSILON_DECAY,
+    show_progress: bool = True,
 ) -> Tuple[QTable, List[Dict[str, Any]]]:
     """Train a sparse tabular Q-learning agent.
 
@@ -55,7 +57,15 @@ def train_q_learning(
     Q: QTable = defaultdict(_new_q_values)
     training_log: List[Dict[str, Any]] = []
 
-    for episode in range(1, episodes + 1):
+    episode_iter = trange(
+        1,
+        episodes + 1,
+        desc="Q-learning",
+        unit="episode",
+        disable=not show_progress,
+    )
+
+    for episode in episode_iter:
         state = env.reset()
         done = False
         total_reward = 0.0
@@ -108,6 +118,14 @@ def train_q_learning(
         )
 
         epsilon = max(MIN_EPSILON, epsilon * epsilon_decay)
+
+        if show_progress:
+            episode_iter.set_postfix(
+                reward=f"{total_reward:.1f}",
+                epsilon=f"{epsilon:.3f}",
+                states=len(Q),
+                terminal=terminal_reason,
+            )
 
     return Q, training_log
 

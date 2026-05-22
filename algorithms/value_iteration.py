@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Tuple
 
+from tqdm import tqdm, trange
+
 from env.config import (
     ACTIONS,
     GAMMA,
@@ -17,7 +19,11 @@ VTable = DefaultDict[State, float]
 Policy = Dict[State, int]
 
 
-def build_reachable_states(env, max_states: Optional[int] = None) -> List[State]:
+def build_reachable_states(
+    env,
+    max_states: Optional[int] = None,
+    show_progress: bool = True,
+) -> List[State]:
     """Discover reachable decision states with BFS from the initial state.
 
     This function deliberately avoids the full Cartesian state space. It uses a
@@ -32,29 +38,42 @@ def build_reachable_states(env, max_states: Optional[int] = None) -> List[State]
     visited = {initial_state}
     states: List[State] = []
 
-    while queue:
-        state = queue.popleft()
-        states.append(state)
+    progress = tqdm(
+        desc="Reachable-state BFS",
+        unit="state",
+        disable=not show_progress,
+    )
 
-        # Terminal decision states have no useful outgoing action updates.
-        if not env.get_valid_actions(state):
-            continue
+    try:
+        while queue:
+            state = queue.popleft()
+            states.append(state)
+            progress.update(1)
 
-        for action in range(len(ACTIONS)):
-            for _, next_state, _, done, _ in env.get_transitions(state, action):
-                if done:
-                    continue
-                if next_state in visited:
-                    continue
+            # Terminal decision states have no useful outgoing action updates.
+            if not env.get_valid_actions(state):
+                continue
 
-                visited.add(next_state)
-                queue.append(next_state)
+            for action in range(len(ACTIONS)):
+                for _, next_state, _, done, _ in env.get_transitions(state, action):
+                    if done:
+                        continue
+                    if next_state in visited:
+                        continue
 
-                if max_states is not None and len(visited) > max_states:
-                    raise MemoryError(
-                        "Reachable state limit exceeded. Increase max_states or "
-                        "use the reduced Value Iteration configuration from the spec."
-                    )
+                    visited.add(next_state)
+                    queue.append(next_state)
+
+                    if max_states is not None and len(visited) > max_states:
+                        raise MemoryError(
+                            "Reachable state limit exceeded. Increase max_states or "
+                            "use the reduced Value Iteration configuration from the spec."
+                        )
+
+            if show_progress and len(states) % 1000 == 0:
+                progress.set_postfix(visited=len(visited), queue=len(queue))
+    finally:
+        progress.close()
 
     return states
 
@@ -65,6 +84,7 @@ def value_iteration(
     theta: float = VALUE_ITERATION_THETA,
     max_iterations: int = VALUE_ITERATION_MAX_ITERATIONS,
     states: Optional[Iterable[State]] = None,
+    show_progress: bool = True,
 ) -> Tuple[VTable, Policy, List[State], List[Dict[str, Any]]]:
     """Run sparse Value Iteration over BFS-discovered reachable states.
 
@@ -75,14 +95,22 @@ def value_iteration(
     """
 
     if states is None:
-        state_list = build_reachable_states(env)
+        state_list = build_reachable_states(env, show_progress=show_progress)
     else:
         state_list = list(states)
 
     V: VTable = defaultdict(float)
     iteration_log: List[Dict[str, Any]] = []
 
-    for iteration in range(1, max_iterations + 1):
+    iteration_iter = trange(
+        1,
+        max_iterations + 1,
+        desc="Value Iteration",
+        unit="iteration",
+        disable=not show_progress,
+    )
+
+    for iteration in iteration_iter:
         delta = 0.0
         V_new: VTable = defaultdict(float)
 
@@ -101,6 +129,8 @@ def value_iteration(
 
         V = V_new
         iteration_log.append({"iteration": iteration, "delta": delta})
+        if show_progress:
+            iteration_iter.set_postfix(delta=f"{delta:.6g}", states=len(state_list))
 
         if delta < theta:
             break

@@ -55,7 +55,11 @@ Useful optional arguments:
 python main.py --mode train_q_learning --episodes 10000
 python main.py --mode evaluate --eval_episodes 500
 python main.py --mode value_iteration --max_iterations 1000 --theta 1e-6
+python main.py --mode all --no_progress
 ```
+
+Progress bars are enabled by default. Use `--no_progress` when running in a
+log file or non-interactive environment.
 
 ## Output Files
 
