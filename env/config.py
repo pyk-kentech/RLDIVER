@@ -76,12 +76,13 @@ MOVEMENT_ACTIONS = {
     ACTION_RIGHT: (1, 0),
 }
 
-# Fixed fish table from the specification.
+# Fixed fish table. The six fish count is kept to avoid exponential fish-mask
+# growth, but positions are arranged on a more maze-like 11x11 ocean map.
 FISH_CONFIG = [
     {
         "id": 0,
         "name": "Small Reef Fish",
-        "position": (2, 2),
+        "position": (9, 4),
         "health": 2,
         "aggression": 0.10,
         "attack_damage": 2,
@@ -91,7 +92,7 @@ FISH_CONFIG = [
     {
         "id": 1,
         "name": "Striped Bass",
-        "position": (4, 3),
+        "position": (6, 2),
         "health": 3,
         "aggression": 0.20,
         "attack_damage": 3,
@@ -101,7 +102,7 @@ FISH_CONFIG = [
     {
         "id": 2,
         "name": "Deep Snapper",
-        "position": (6, 5),
+        "position": (0, 8),
         "health": 4,
         "aggression": 0.30,
         "attack_damage": 5,
@@ -111,7 +112,7 @@ FISH_CONFIG = [
     {
         "id": 3,
         "name": "Barracuda",
-        "position": (8, 6),
+        "position": (9, 8),
         "health": 5,
         "aggression": 0.40,
         "attack_damage": 6,
@@ -121,7 +122,7 @@ FISH_CONFIG = [
     {
         "id": 4,
         "name": "Deep Tuna",
-        "position": (5, 8),
+        "position": (7, 8),
         "health": 6,
         "aggression": 0.50,
         "attack_damage": 8,
@@ -131,7 +132,7 @@ FISH_CONFIG = [
     {
         "id": 5,
         "name": "Abyss Shark",
-        "position": (9, 9),
+        "position": (5, 6),
         "health": 7,
         "aggression": 0.60,
         "attack_damage": 10,
@@ -140,13 +141,55 @@ FISH_CONFIG = [
     },
 ]
 
-# Fixed obstacle cells that Dave cannot enter.
+# Fixed obstacle cells that Dave cannot enter. Surface cells are kept open.
 OBSTACLES = {
-    (3, 4),
-    (3, 5),
-    (3, 6),
-    (7, 2),
+    (0, 1),
+    (1, 1),
+    (2, 1),
+    (3, 1),
+    (4, 1),
+    (5, 1),
+    (6, 1),
+    (7, 1),
+    (9, 1),
+    (0, 2),
+    (0, 3),
+    (1, 3),
+    (2, 3),
+    (3, 3),
+    (4, 3),
+    (6, 3),
     (7, 3),
-    (7, 4),
+    (8, 3),
+    (10, 3),
+    (0, 4),
+    (4, 4),
+    (8, 4),
+    (0, 5),
+    (1, 5),
+    (2, 5),
+    (4, 5),
+    (5, 5),
+    (6, 5),
+    (8, 5),
+    (9, 5),
+    (10, 5),
+    (6, 6),
+    (2, 7),
+    (3, 7),
+    (4, 7),
     (6, 7),
+    (7, 7),
+    (8, 7),
+    (10, 7),
+    (4, 8),
+    (0, 9),
+    (1, 9),
+    (2, 9),
+    (4, 9),
+    (5, 9),
+    (6, 9),
+    (7, 9),
+    (8, 9),
+    (10, 9),
 }
