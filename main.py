@@ -63,17 +63,30 @@ def set_global_seeds(seed: int = RANDOM_SEED) -> None:
     np.random.seed(seed)
 
 
-def run_value_iteration(args: argparse.Namespace) -> None:
+def run_value_iteration(args: argparse.Namespace) -> bool:
     """Run sparse Value Iteration and save values, policy, and iteration log."""
 
     env = UnderwaterFishingEnv(stochastic=False, seed=args.seed)
-    V, policy, states, iteration_log = value_iteration(
-        env,
-        gamma=args.gamma,
-        theta=args.theta,
-        max_iterations=args.max_iterations,
-        show_progress=args.show_progress,
+    max_reachable_states = (
+        None if args.max_reachable_states == 0 else args.max_reachable_states
     )
+
+    try:
+        V, policy, states, iteration_log = value_iteration(
+            env,
+            gamma=args.gamma,
+            theta=args.theta,
+            max_iterations=args.max_iterations,
+            show_progress=args.show_progress,
+            max_states=max_reachable_states,
+        )
+    except MemoryError as exc:
+        print(f"Value Iteration skipped: {exc}")
+        print(
+            "Use --skip_value_iteration for model-free runs, or "
+            "--max_reachable_states 0 to attempt the full BFS at your own risk."
+        )
+        return False
 
     save_pickle(V, RESULTS_DIR / "value_iteration_values.pkl")
     save_pickle(policy, RESULTS_DIR / "value_iteration_policy.pkl")
@@ -81,6 +94,7 @@ def run_value_iteration(args: argparse.Namespace) -> None:
 
     print(f"Value Iteration finished with {len(states)} reachable states.")
     print(f"Saved value and policy files to {RESULTS_DIR}.")
+    return True
 
 
 def run_train_sarsa(args: argparse.Namespace) -> None:
@@ -185,8 +199,11 @@ def run_plot(args: argparse.Namespace) -> None:
 def run_all(args: argparse.Namespace) -> None:
     """Run Value Iteration, SARSA, Q-learning, evaluation, and plotting."""
 
-    print("[1/5] Running Value Iteration")
-    run_value_iteration(args)
+    if args.skip_value_iteration:
+        print("[1/5] Skipping Value Iteration")
+    else:
+        print("[1/5] Running Value Iteration")
+        run_value_iteration(args)
     print("[2/5] Training SARSA")
     run_train_sarsa(args)
     print("[3/5] Training Q-learning")
@@ -378,6 +395,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min_epsilon", type=float, default=MIN_EPSILON)
     parser.add_argument("--theta", type=float, default=VALUE_ITERATION_THETA)
     parser.add_argument("--max_iterations", type=int, default=VALUE_ITERATION_MAX_ITERATIONS)
+    parser.add_argument(
+        "--max_reachable_states",
+        type=int,
+        default=200000,
+        help=(
+            "Safety cap for Value Iteration reachable-state BFS. "
+            "Use 0 to disable the cap."
+        ),
+    )
+    parser.add_argument(
+        "--skip_value_iteration",
+        action="store_true",
+        help="Skip Value Iteration in --mode all and run only model-free phases.",
+    )
     parser.add_argument("--seed", type=int, default=RANDOM_SEED)
     parser.add_argument(
         "--no_progress",

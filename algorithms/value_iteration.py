@@ -85,6 +85,7 @@ def value_iteration(
     max_iterations: int = VALUE_ITERATION_MAX_ITERATIONS,
     states: Optional[Iterable[State]] = None,
     show_progress: bool = True,
+    max_states: Optional[int] = None,
 ) -> Tuple[VTable, Policy, List[State], List[Dict[str, Any]]]:
     """Run sparse Value Iteration over BFS-discovered reachable states.
 
@@ -95,7 +96,11 @@ def value_iteration(
     """
 
     if states is None:
-        state_list = build_reachable_states(env, show_progress=show_progress)
+        state_list = build_reachable_states(
+            env,
+            max_states=max_states,
+            show_progress=show_progress,
+        )
     else:
         state_list = list(states)
 
