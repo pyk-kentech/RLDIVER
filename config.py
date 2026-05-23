@@ -62,7 +62,7 @@ MOVEMENT_ACTIONS = {
 FISH_CONFIG = [
     {
         "id": 0,
-        "name": "Training Reef Fish",
+        "name": "Starry Puffer",
         "position": (2, 2),
         "health": 2,
         "aggression": 0.10,
@@ -72,7 +72,7 @@ FISH_CONFIG = [
     },
     {
         "id": 1,
-        "name": "Cave Bass",
+        "name": "Sheepshead",
         "position": (6, 2),
         "health": 3,
         "aggression": 0.20,
@@ -82,7 +82,7 @@ FISH_CONFIG = [
     },
     {
         "id": 2,
-        "name": "Longfin Snapper",
+        "name": "Marlin",
         "position": (5, 5),
         "health": 4,
         "aggression": 0.30,
@@ -92,7 +92,7 @@ FISH_CONFIG = [
     },
     {
         "id": 3,
-        "name": "Reduced Abyss Shark",
+        "name": "Tiger Shark",
         "position": (1, 7),
         "health": 5,
         "aggression": 0.45,

@@ -85,10 +85,10 @@ Fish configuration:
 
 | Fish | Name | Position | Health | Aggression | Attack Damage | Weight | Value |
 |---|---|---:|---:|---:|---:|---:|---:|
-| F0 | Training Reef Fish | `(2, 2)` | 2 | 0.10 | 2 | 2 | 20 |
-| F1 | Cave Bass | `(6, 2)` | 3 | 0.20 | 3 | 3 | 40 |
-| F2 | Longfin Snapper | `(5, 5)` | 4 | 0.30 | 5 | 4 | 70 |
-| F3 | Reduced Abyss Shark | `(1, 7)` | 5 | 0.45 | 6 | 5 | 100 |
+| F0 | Starry Puffer | `(2, 2)` | 2 | 0.10 | 2 | 2 | 20 |
+| F1 | Sheepshead | `(6, 2)` | 3 | 0.20 | 3 | 3 | 40 |
+| F2 | Marlin | `(5, 5)` | 4 | 0.30 | 5 | 4 | 70 |
+| F3 | Tiger Shark | `(1, 7)` | 5 | 0.45 | 6 | 5 | 100 |
 
 Fish roles:
 
