@@ -99,18 +99,12 @@ This runs:
 Use smaller settings for a quick smoke test:
 
 ```bash
-python main.py --max_iterations 1 --episodes 3 --eval_episodes 2 --no_progress
+python main.py --max_iterations 1 --episodes 3 --eval_episodes 2
 ```
 
-Progress bars are enabled by default. Use `--no_progress` for cleaner logs.
+Progress bars are enabled by default.
 
 ## Individual Commands
-
-Show the map and fish table:
-
-```bash
-python main.py --mode show_map
-```
 
 Run only Value Iteration:
 
@@ -139,10 +133,10 @@ python main.py --mode evaluate
 Useful quick-test commands:
 
 ```bash
-python main.py --mode value_iteration --max_iterations 1 --no_progress
-python main.py --mode train_sarsa --episodes 10 --no_progress
-python main.py --mode train_q_learning --episodes 10 --no_progress
-python main.py --mode evaluate --eval_episodes 5 --no_progress
+python main.py --mode value_iteration --max_iterations 1
+python main.py --mode train_sarsa --episodes 10
+python main.py --mode train_q_learning --episodes 10
+python main.py --mode evaluate --eval_episodes 5
 ```
 
 ## Outputs

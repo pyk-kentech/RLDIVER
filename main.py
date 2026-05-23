@@ -1,28 +1,4 @@
-"""Command-line runner for the 8x8 tabular diver MDP.
-
-Current environment summary:
-    Dave starts at the surface base `(0, 0)` with 34 oxygen units and
-    80 global time units. The map is an 8x8 maze-like ocean. Obstacles force
-    route planning, and each fish is placed to create a different decision:
-
-    D  .  .  .  .  .  .  .
-    #  #  .  #  .  #  #  .
-    .  . F0  #  .  . F1  .
-    .  #  #  #  #  .  #  .
-    .  .  .  .  .  .  #  .
-    #  #  .  #  . F2  .  .
-    .  .  .  #  #  #  .  #
-    . F3  .  .  .  .  .  .
-
-    F0 Training Reef Fish at (2, 2): safe early target.
-    F1 Cave Bass at (6, 2): medium-value right-side detour.
-    F2 Longfin Snapper at (5, 5): deeper high-value target.
-    F3 Reduced Abyss Shark at (1, 7): farthest high-risk target.
-
-The state is `(x, d, oxygen, global_time, weight, fish_mask)`.
-All algorithms are tabular and use sparse dictionaries. No function
-approximation is used.
-"""
+"""Command-line runner for the 8x8 tabular diver MDP."""
 
 from __future__ import annotations
 
@@ -128,16 +104,13 @@ def run_value_iteration(args: argparse.Namespace) -> Dict[str, Any]:
     """Run Value Iteration and save its artifacts."""
 
     print("Step: Value Iteration")
-    print(
-        f"  theta={args.theta}, max_iterations={args.max_iterations}, "
-        f"progress={'on' if args.show_progress else 'off'}"
-    )
+    print(f"  theta={args.theta}, max_iterations={args.max_iterations}")
     env = ReducedUnderwaterFishingEnv(stochastic=False, seed=args.seed)
     V, policy, states, iteration_log = value_iteration(
         env,
         theta=args.theta,
         max_iterations=args.max_iterations,
-        show_progress=args.show_progress,
+        show_progress=True,
     )
 
     save_pickle(V, RESULTS_DIR / "reduced_value_iteration_values.pkl")
@@ -169,7 +142,7 @@ def run_sarsa(args: argparse.Namespace) -> Dict[str, Any]:
         args.epsilon_decay,
         args.min_epsilon,
         args.seed,
-        args.show_progress,
+        True,
     )
     save_pickle(Q, RESULTS_DIR / "reduced_sarsa_q.pkl")
     save_csv(log, RESULTS_DIR / "reduced_sarsa_training_log.csv")
@@ -196,7 +169,7 @@ def run_q_learning(args: argparse.Namespace) -> Dict[str, Any]:
         args.epsilon_decay,
         args.min_epsilon,
         args.seed,
-        args.show_progress,
+        True,
     )
     save_pickle(Q, RESULTS_DIR / "reduced_q_learning_q.pkl")
     save_csv(log, RESULTS_DIR / "reduced_q_learning_training_log.csv")
@@ -413,7 +386,6 @@ def parse_args() -> argparse.Namespace:
             "train_q_learning",
             "evaluate",
             "plot",
-            "show_map",
         ],
         default="all",
         help="Which part of the experiment to run. Default: all.",
@@ -428,13 +400,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--theta", type=float, default=VALUE_ITERATION_THETA)
     parser.add_argument("--max_iterations", type=int, default=VALUE_ITERATION_MAX_ITERATIONS)
     parser.add_argument("--seed", type=int, default=RANDOM_SEED)
-    parser.add_argument(
-        "--no_progress",
-        dest="show_progress",
-        action="store_false",
-        help="Disable tqdm progress bars for cleaner logs.",
-    )
-    parser.set_defaults(show_progress=True)
     return parser.parse_args()
 
 
@@ -446,9 +411,7 @@ def main() -> None:
     np.random.seed(args.seed)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    if args.mode == "show_map":
-        print_environment_summary()
-    elif args.mode == "value_iteration":
+    if args.mode == "value_iteration":
         print_environment_summary()
         run_value_iteration(args)
     elif args.mode == "train_sarsa":
