@@ -13,17 +13,18 @@ logic:
 
 It reduces the problem size to make exact tabular DP tractable:
 
-- Grid: `5 x 5`
-- Fish count: `3`
-- Fish mask size: `8`
-- Oxygen: `22`
-- Global time: `50`
+- Grid: `6 x 6`
+- Fish count: `4`
+- Fish mask size: `16`
+- Oxygen: `28`
+- Global time: `65`
 
 The fish placement is designed so every fish has a purpose:
 
 - `F0`: safe early fish near the entrance.
 - `F1`: medium fish on a right-side detour.
-- `F2`: farthest fish that tests whether the policy can still return safely.
+- `F2`: deeper high-value fish on the lower-right route.
+- `F3`: farthest fish, valuable but costly to reach and return from.
 
 Run:
 
@@ -43,3 +44,11 @@ results/reduced_value_iteration_eval.csv
 
 Use this result as the DP baseline in the report, while SARSA and Q-learning
 remain evaluated on the full environment.
+
+Reference run on the current intermediate reduced MDP:
+
+```text
+Reachable states: 510429
+Iterations to convergence: 51
+Evaluation avg_reward: about 345.6
+```

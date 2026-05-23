@@ -6,15 +6,15 @@ oxygen, and lower global time so exact tabular DP can finish on normal course
 servers.
 """
 
-GRID_WIDTH = 5
-GRID_DEPTH = 5
+GRID_WIDTH = 6
+GRID_DEPTH = 6
 START_POS = (0, 0)
 
-MAX_OXYGEN = 22
-MAX_GLOBAL_TIME = 50
+MAX_OXYGEN = 28
+MAX_GLOBAL_TIME = 65
 
-MAX_WEIGHT_LIMIT = 5
-MAX_TRACKED_WEIGHT = 10
+MAX_WEIGHT_LIMIT = 7
+MAX_TRACKED_WEIGHT = 14
 
 NORMAL_MOVE_COST = 1
 OVERWEIGHT_MOVE_COST = 2
@@ -31,11 +31,11 @@ VALUE_ITERATION_THETA = 1e-6
 VALUE_ITERATION_MAX_ITERATIONS = 1000
 EVAL_EPISODES = 200
 RANDOM_SEED = 42
-MAX_EPISODE_STEPS = 120
+MAX_EPISODE_STEPS = 180
 
-# Three fish means a 3-bit availability mask. This keeps a nontrivial capture
-# order decision while making exact DP tractable on a course server.
-INITIAL_FISH_MASK = 0b111
+# Four fish means a 4-bit availability mask. This is still much smaller than
+# the full 6-fish mask, but it preserves a meaningful capture-order problem.
+INITIAL_FISH_MASK = 0b1111
 
 ACTION_UP = 0
 ACTION_DOWN = 1
@@ -57,7 +57,8 @@ MOVEMENT_ACTIONS = {
 # Meaningful fish placement:
 # F0: safe early fish near the entrance, a natural first target.
 # F1: medium-value fish on a short right-side detour.
-# F2: farthest fish that tests whether the policy can still return safely.
+# F2: deeper high-value fish on the lower-right route.
+# F3: farthest fish, valuable but costly to reach and return from.
 FISH_CONFIG = [
     {
         "id": 0,
@@ -72,7 +73,7 @@ FISH_CONFIG = [
     {
         "id": 1,
         "name": "Cave Bass",
-        "position": (3, 2),
+        "position": (4, 2),
         "health": 3,
         "aggression": 0.20,
         "attack_damage": 3,
@@ -82,12 +83,22 @@ FISH_CONFIG = [
     {
         "id": 2,
         "name": "Longfin Snapper",
-        "position": (0, 4),
+        "position": (4, 4),
         "health": 4,
-        "aggression": 0.25,
-        "attack_damage": 4,
+        "aggression": 0.30,
+        "attack_damage": 5,
         "weight": 4,
         "value": 70,
+    },
+    {
+        "id": 3,
+        "name": "Reduced Abyss Shark",
+        "position": (0, 5),
+        "health": 5,
+        "aggression": 0.45,
+        "attack_damage": 6,
+        "weight": 5,
+        "value": 100,
     },
 ]
 
@@ -95,6 +106,10 @@ OBSTACLES = {
     (0, 1),
     (1, 1),
     (3, 1),
+    (5, 1),
+    (3, 2),
     (1, 3),
     (2, 3),
+    (4, 3),
+    (1, 5),
 }
