@@ -19,7 +19,6 @@ RLDIVER/
   env.py
   value_iteration.py
   main.py
-  run_value_iteration.py
   algorithms/
     __init__.py
     q_learning.py
@@ -98,12 +97,6 @@ Use smaller settings for a quick smoke test:
 
 ```bash
 python main.py --max_iterations 1 --episodes 3 --eval_episodes 2 --no_progress
-```
-
-Run only Value Iteration:
-
-```bash
-python run_value_iteration.py
 ```
 
 Progress bars are enabled by default. Use `--no_progress` for cleaner logs.
