@@ -9,6 +9,28 @@ No function approximation is used. The project uses explicit tabular state
 values, tabular action values, sparse dictionaries, and exact transition
 enumeration for Value Iteration.
 
+## File Structure
+
+```text
+RLDIVER/
+  README.md
+  requirements.txt
+  config.py
+  env.py
+  value_iteration.py
+  main.py
+  run_value_iteration.py
+  algorithms/
+    __init__.py
+    q_learning.py
+    sarsa.py
+  results/
+```
+
+`algorithms/q_learning.py` and `algorithms/sarsa.py` contain the model-free
+control implementations. `value_iteration.py` contains the Dynamic Programming
+baseline.
+
 ## MDP
 
 State:
