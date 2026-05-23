@@ -31,7 +31,7 @@ import csv
 import pickle
 import random
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Mapping, Sequence
+from typing import Any, Dict, List, Mapping, Sequence
 
 import numpy as np
 
@@ -40,11 +40,27 @@ from config import (
     EVAL_EPISODES,
     FISH_CONFIG,
     GAMMA,
+    GRID_DEPTH,
+    GRID_WIDTH,
+    INITIAL_FISH_MASK,
+    MAX_GLOBAL_TIME,
+    MAX_OXYGEN,
     RANDOM_SEED,
     VALUE_ITERATION_MAX_ITERATIONS,
     VALUE_ITERATION_THETA,
 )
 from env import ReducedUnderwaterFishingEnv, State
+from utils.evaluation import evaluate_policy, rollout_episode
+from utils.plotting import (
+    plot_death_rate_curve,
+    plot_oxygen_time_curve,
+    plot_policy_map,
+    plot_reward_curve_comparison,
+    plot_survival_rate_curve,
+    plot_training_reward_curve,
+    plot_trajectory,
+    read_csv_rows,
+)
 from value_iteration import value_iteration
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
@@ -57,77 +73,6 @@ def policy_action(policy: Mapping[State, int], state: State, valid_actions: Sequ
     if action in valid_actions:
         return int(action)
     return int(valid_actions[0])
-
-
-def evaluate_policy(
-    method: str,
-    policy_fn: Callable[[State, Sequence[int]], int],
-    episodes: int,
-    seed: int,
-) -> Dict[str, Any]:
-    """Evaluate a policy on the stochastic MDP and return one CSV-ready row."""
-
-    rewards = []
-    deaths = []
-    steps_list = []
-    fish_values = []
-    fish_counts = []
-    remaining_oxygen = []
-    remaining_time = []
-    all_fish = []
-
-    for episode in range(episodes):
-        env = ReducedUnderwaterFishingEnv(stochastic=True, seed=seed + episode)
-        state = env.reset()
-        done = False
-        total_reward = 0.0
-        steps = 0
-        fish_value = 0.0
-        fish_count = 0
-        terminal_reason = None
-
-        while not done:
-            valid_actions = env.get_valid_actions(state)
-            if not valid_actions:
-                break
-
-            action = policy_fn(state, valid_actions)
-            if action not in valid_actions:
-                action = valid_actions[0]
-
-            state, reward, done, info = env.step(action)
-            total_reward += reward
-            steps += 1
-
-            caught_fish_id = info.get("caught_fish_id")
-            if caught_fish_id is not None:
-                fish_value += env.fish_by_id[caught_fish_id]["value"]
-                fish_count += 1
-            terminal_reason = info.get("terminal_reason")
-
-        death = terminal_reason in {"death", "failed_surface"}
-        rewards.append(total_reward)
-        deaths.append(int(death))
-        steps_list.append(steps)
-        fish_values.append(fish_value)
-        fish_counts.append(fish_count)
-        remaining_oxygen.append(state[2])
-        remaining_time.append(state[3])
-        all_fish.append(1 if terminal_reason == "all_fish_caught" else 0)
-
-    return {
-        "method": method,
-        "avg_reward": float(np.mean(rewards)),
-        "std_reward": float(np.std(rewards)),
-        "survival_rate": float(1.0 - np.mean(deaths)),
-        "death_rate": float(np.mean(deaths)),
-        "avg_steps": float(np.mean(steps_list)),
-        "avg_fish_value": float(np.mean(fish_values)),
-        "avg_num_fish_caught": float(np.mean(fish_counts)),
-        "avg_remaining_oxygen": float(np.mean(remaining_oxygen)),
-        "avg_remaining_time": float(np.mean(remaining_time)),
-        "all_fish_caught_rate": float(np.mean(all_fish)),
-    }
 
 
 def save_pickle(obj: Any, path: Path) -> None:
@@ -335,6 +280,92 @@ def run_evaluation(
     return rows
 
 
+def run_plot(args: argparse.Namespace) -> None:
+    """Generate reward curves, survival/death curves, maps, and trajectories."""
+
+    print("Step: Plotting")
+    sarsa_log = read_csv_rows(RESULTS_DIR / "reduced_sarsa_training_log.csv")
+    q_learning_log = read_csv_rows(RESULTS_DIR / "reduced_q_learning_training_log.csv")
+
+    if sarsa_log:
+        plot_training_reward_curve(
+            sarsa_log,
+            RESULTS_DIR / "sarsa_reward_curve.png",
+            "SARSA Reward Curve",
+        )
+        print("  saved: results/sarsa_reward_curve.png")
+    else:
+        print("  skipped SARSA reward curve: training log not found")
+
+    if q_learning_log:
+        plot_training_reward_curve(
+            q_learning_log,
+            RESULTS_DIR / "q_learning_reward_curve.png",
+            "Q-learning Reward Curve",
+        )
+        print("  saved: results/q_learning_reward_curve.png")
+    else:
+        print("  skipped Q-learning reward curve: training log not found")
+
+    if sarsa_log and q_learning_log:
+        plot_reward_curve_comparison(
+            sarsa_log,
+            q_learning_log,
+            RESULTS_DIR / "reward_curve_comparison.png",
+        )
+        plot_survival_rate_curve(
+            sarsa_log,
+            q_learning_log,
+            RESULTS_DIR / "survival_rate_curve.png",
+        )
+        plot_death_rate_curve(
+            sarsa_log,
+            q_learning_log,
+            RESULTS_DIR / "death_rate_curve.png",
+        )
+        print("  saved: results/reward_curve_comparison.png")
+        print("  saved: results/survival_rate_curve.png")
+        print("  saved: results/death_rate_curve.png")
+
+    vi_policy = None
+    sarsa_q = None
+    q_learning_q = None
+    if (RESULTS_DIR / "reduced_value_iteration_policy.pkl").exists():
+        vi_policy = load_pickle(RESULTS_DIR / "reduced_value_iteration_policy.pkl")
+        plot_policy_map(
+            vi_policy,
+            RESULTS_DIR / "policy_map_value_iteration.png",
+            "Value Iteration Policy Map",
+        )
+        print("  saved: results/policy_map_value_iteration.png")
+    if (RESULTS_DIR / "reduced_sarsa_q.pkl").exists():
+        sarsa_q = load_pickle(RESULTS_DIR / "reduced_sarsa_q.pkl")
+        sarsa_policy = _representative_policy_from_q(sarsa_q)
+        plot_policy_map(sarsa_policy, RESULTS_DIR / "policy_map_sarsa.png", "SARSA Policy Map")
+        print("  saved: results/policy_map_sarsa.png")
+    if (RESULTS_DIR / "reduced_q_learning_q.pkl").exists():
+        q_learning_q = load_pickle(RESULTS_DIR / "reduced_q_learning_q.pkl")
+        q_policy = _representative_policy_from_q(q_learning_q)
+        plot_policy_map(q_policy, RESULTS_DIR / "policy_map_q_learning.png", "Q-learning Policy Map")
+        print("  saved: results/policy_map_q_learning.png")
+
+    if vi_policy is not None:
+        rollout = rollout_episode(lambda state, valid: policy_action(vi_policy, state, valid), seed=args.seed)
+        plot_trajectory(rollout, RESULTS_DIR / "trajectory_value_iteration.png", "Value Iteration Trajectory")
+        print("  saved: results/trajectory_value_iteration.png")
+    if sarsa_q is not None:
+        rollout = rollout_episode(lambda state, valid: greedy_action_from_q(sarsa_q, state, valid), seed=args.seed)
+        plot_trajectory(rollout, RESULTS_DIR / "trajectory_sarsa.png", "SARSA Trajectory")
+        print("  saved: results/trajectory_sarsa.png")
+    if q_learning_q is not None:
+        rollout = rollout_episode(lambda state, valid: greedy_action_from_q(q_learning_q, state, valid), seed=args.seed)
+        plot_trajectory(rollout, RESULTS_DIR / "trajectory_q_learning.png", "Q-learning Trajectory")
+        plot_oxygen_time_curve(rollout, RESULTS_DIR / "oxygen_time_curve_q_learning.png")
+        print("  saved: results/trajectory_q_learning.png")
+        print("  saved: results/oxygen_time_curve_q_learning.png")
+    print()
+
+
 def run_all(args: argparse.Namespace) -> None:
     """Run VI, SARSA, Q-learning, and evaluation."""
 
@@ -350,6 +381,21 @@ def run_all(args: argparse.Namespace) -> None:
         sarsa_q=sarsa_result["Q"],
         q_learning_q=q_learning_result["Q"],
     )
+    run_plot(args)
+
+
+def _representative_policy_from_q(Q: Any) -> Dict[State, int]:
+    """Build a representative full-resource policy map from a Q-table."""
+
+    policy: Dict[State, int] = {}
+    env = ReducedUnderwaterFishingEnv(stochastic=False, seed=RANDOM_SEED)
+    for d in range(GRID_DEPTH):
+        for x in range(GRID_WIDTH):
+            state = (x, d, MAX_OXYGEN, MAX_GLOBAL_TIME, 0, INITIAL_FISH_MASK)
+            valid_actions = env.get_valid_actions(state)
+            if valid_actions:
+                policy[state] = greedy_action_from_q(Q, state, valid_actions)
+    return policy
 
 
 def parse_args() -> argparse.Namespace:
@@ -366,6 +412,7 @@ def parse_args() -> argparse.Namespace:
             "train_sarsa",
             "train_q_learning",
             "evaluate",
+            "plot",
             "show_map",
         ],
         default="all",
@@ -413,6 +460,9 @@ def main() -> None:
     elif args.mode == "evaluate":
         print_environment_summary()
         run_evaluation(args)
+    elif args.mode == "plot":
+        print_environment_summary()
+        run_plot(args)
     elif args.mode == "all":
         run_all(args)
     else:
