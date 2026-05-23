@@ -33,6 +33,12 @@ cd reduced_value_iteration
 python run_value_iteration.py
 ```
 
+To compare all three methods on the same reduced MDP:
+
+```bash
+python run_all.py
+```
+
 Outputs:
 
 ```text
@@ -40,6 +46,9 @@ results/reduced_value_iteration_values.pkl
 results/reduced_value_iteration_policy.pkl
 results/reduced_value_iteration_log.csv
 results/reduced_value_iteration_eval.csv
+results/reduced_evaluation_summary.csv
+results/reduced_sarsa_training_log.csv
+results/reduced_q_learning_training_log.csv
 ```
 
 Use this result as the DP baseline in the report, while SARSA and Q-learning
