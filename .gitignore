@@ -12,3 +12,5 @@ venv/
 
 results/*
 !results/.gitkeep
+reduced_value_iteration/results/*
+!reduced_value_iteration/results/.gitkeep

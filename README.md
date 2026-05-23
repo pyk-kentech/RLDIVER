@@ -61,6 +61,15 @@ python main.py --mode all --no_progress
 Progress bars are enabled by default. Use `--no_progress` when running in a
 log file or non-interactive environment.
 
+Full Value Iteration on the complete MDP may be computationally prohibitive.
+A standalone reduced DP baseline is provided in `reduced_value_iteration/`.
+It uses the same transition logic on a smaller, structurally similar MDP:
+
+```bash
+cd reduced_value_iteration
+python run_value_iteration.py
+```
+
 ## Output Files
 
 Outputs are written to the `results/` directory.
