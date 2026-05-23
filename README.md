@@ -158,8 +158,8 @@ exact transition enumeration for Value Iteration.
   `1 - aggression` and `aggression`.
 - Invalid catch leaves the diver in place but costs `1` oxygen and `1`
   remaining global time and gives a `-10` penalty.
-- `surface` returns the diver to `(0, 0)` when enough oxygen and time remain.
-  Its return cost is `x + d`.
+- `surface` returns the diver to `(0, 0)` only when both oxygen and remaining
+  global time are greater than the return cost `x + d`.
 - Successful surfacing with positive carried weight gives a `50` surface bonus,
   resets oxygen to `34`, and resets carried weight to `0`.
 - Surfacing at `(0, 0)` with zero carried weight is treated as invalid farming:
