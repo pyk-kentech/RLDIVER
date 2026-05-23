@@ -6,12 +6,12 @@ oxygen, and lower global time so exact tabular DP can finish on normal course
 servers.
 """
 
-GRID_WIDTH = 6
-GRID_DEPTH = 6
+GRID_WIDTH = 8
+GRID_DEPTH = 8
 START_POS = (0, 0)
 
-MAX_OXYGEN = 28
-MAX_GLOBAL_TIME = 65
+MAX_OXYGEN = 34
+MAX_GLOBAL_TIME = 80
 
 MAX_WEIGHT_LIMIT = 7
 MAX_TRACKED_WEIGHT = 14
@@ -31,7 +31,7 @@ VALUE_ITERATION_THETA = 1e-6
 VALUE_ITERATION_MAX_ITERATIONS = 1000
 EVAL_EPISODES = 200
 RANDOM_SEED = 42
-MAX_EPISODE_STEPS = 180
+MAX_EPISODE_STEPS = 240
 
 # Four fish means a 4-bit availability mask. This is still much smaller than
 # the full 6-fish mask, but it preserves a meaningful capture-order problem.
@@ -63,7 +63,7 @@ FISH_CONFIG = [
     {
         "id": 0,
         "name": "Training Reef Fish",
-        "position": (1, 2),
+        "position": (2, 2),
         "health": 2,
         "aggression": 0.10,
         "attack_damage": 2,
@@ -73,7 +73,7 @@ FISH_CONFIG = [
     {
         "id": 1,
         "name": "Cave Bass",
-        "position": (4, 2),
+        "position": (6, 2),
         "health": 3,
         "aggression": 0.20,
         "attack_damage": 3,
@@ -83,7 +83,7 @@ FISH_CONFIG = [
     {
         "id": 2,
         "name": "Longfin Snapper",
-        "position": (4, 4),
+        "position": (5, 5),
         "health": 4,
         "aggression": 0.30,
         "attack_damage": 5,
@@ -93,7 +93,7 @@ FISH_CONFIG = [
     {
         "id": 3,
         "name": "Reduced Abyss Shark",
-        "position": (0, 5),
+        "position": (1, 7),
         "health": 5,
         "aggression": 0.45,
         "attack_damage": 6,
@@ -107,9 +107,19 @@ OBSTACLES = {
     (1, 1),
     (3, 1),
     (5, 1),
+    (6, 1),
     (3, 2),
     (1, 3),
     (2, 3),
+    (3, 3),
     (4, 3),
+    (6, 3),
+    (6, 4),
+    (0, 5),
     (1, 5),
+    (3, 5),
+    (3, 6),
+    (4, 6),
+    (5, 6),
+    (7, 6),
 }

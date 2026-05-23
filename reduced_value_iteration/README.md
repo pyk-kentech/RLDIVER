@@ -13,11 +13,11 @@ logic:
 
 It reduces the problem size to make exact tabular DP tractable:
 
-- Grid: `6 x 6`
+- Grid: `8 x 8`
 - Fish count: `4`
 - Fish mask size: `16`
-- Oxygen: `28`
-- Global time: `65`
+- Oxygen: `34`
+- Global time: `80`
 
 The fish placement is designed so every fish has a purpose:
 
@@ -48,7 +48,7 @@ remain evaluated on the full environment.
 Reference run on the current intermediate reduced MDP:
 
 ```text
-Reachable states: 510429
-Iterations to convergence: 51
-Evaluation avg_reward: about 345.6
+Reachable states: about 1,320,682
+One Bellman sweep: measured successfully with `--max_iterations 1`
+Full convergence: run `python run_value_iteration.py`
 ```
