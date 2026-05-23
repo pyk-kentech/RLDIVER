@@ -1,141 +1,121 @@
-# Dave the Diver Tabular Reinforcement Learning
+# RLDIVER: 8x8 Tabular Diver MDP
 
-## Project Description
+This project implements an oxygen-limited underwater fishing problem as a
+finite Markov Decision Process. The current version uses a single tractable
+8x8 tabular environment so Value Iteration, SARSA, and Q-learning can all be
+run on the same MDP.
 
-This project models oxygen-limited underwater fishing as a finite Markov Decision Process. The agent controls Dave, a diver who moves through a discrete ocean grid, catches fish, manages oxygen and global mission time, handles carried weight, and decides when to return safely to the surface.
+No function approximation is used. The project uses explicit tabular state
+values, tabular action values, sparse dictionaries, and exact transition
+enumeration for Value Iteration.
 
-The implementation uses only tabular Dynamic Programming and tabular Reinforcement Learning. It does not use neural networks, linear function approximation, deep RL, Gymnasium, Stable-Baselines, PyTorch, or any external RL framework.
+## MDP
 
-## MDP Formulation
-
-The state is:
+State:
 
 ```text
 (x, d, oxygen, global_time, weight, fish_mask)
 ```
 
-where `x` is horizontal position, `d` is depth, `oxygen` is the remaining oxygen for the current dive, `global_time` is the remaining mission time, `weight` is carried fish weight, and `fish_mask` is a six-bit integer showing which fish remain available.
-
-The action space is:
+Actions:
 
 ```text
 up, down, left, right, catch, surface
 ```
 
-Movement consumes oxygen and time. Invalid movement and invalid catch actions keep Dave in place but still consume one oxygen unit, one time unit, and receive a penalty. Fish catches give fish value as reward and may trigger stochastic oxygen damage. The `surface` action returns Dave to base if enough oxygen and time remain.
+Environment size:
 
-The reward structure includes movement cost, invalid action penalty, fish value, surface bonus, death penalty, and underwater timeout penalty.
+```text
+Grid: 8 x 8
+Fish count: 4
+Fish mask size: 16
+Oxygen: 34
+Global time: 80
+```
+
+Current map:
+
+```text
+ D  .  .  .  .  .  .  .
+ #  #  .  #  .  #  #  .
+ .  . F0  #  .  . F1  .
+ .  #  #  #  #  .  #  .
+ .  .  .  .  .  .  #  .
+ #  #  .  #  . F2  .  .
+ .  .  .  #  #  #  .  #
+ . F3  .  .  .  .  .  .
+```
+
+Fish roles:
+
+- `F0`: safe early target.
+- `F1`: right-side detour target.
+- `F2`: deeper high-value target.
+- `F3`: farthest high-risk, high-value target.
 
 ## Installation
-
-Create and activate a Python environment, then install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-The project requires Python with `numpy`, `matplotlib`, `pandas`, and `tqdm`.
-
-## Run Instructions
-
-Run commands from the `RLDIVER` directory:
+## Run Everything
 
 ```bash
-python main.py --mode value_iteration
-python main.py --mode train_sarsa
-python main.py --mode train_q_learning
-python main.py --mode evaluate
-python main.py --mode plot
-python main.py --mode all
+python main.py
 ```
 
-Useful optional arguments:
+This runs:
+
+1. Value Iteration
+2. SARSA
+3. Q-learning
+4. Evaluation of all three policies
+
+Use smaller settings for a quick smoke test:
 
 ```bash
-python main.py --mode train_q_learning --episodes 10000
-python main.py --mode evaluate --eval_episodes 500
-python main.py --mode value_iteration --max_iterations 1000 --theta 1e-6
-python main.py --mode all --no_progress
+python main.py --max_iterations 1 --episodes 3 --eval_episodes 2 --no_progress
 ```
 
-Progress bars are enabled by default. Use `--no_progress` when running in a
-log file or non-interactive environment.
-
-Full Value Iteration on the complete MDP may be computationally prohibitive.
-A standalone reduced DP baseline is provided in `reduced_value_iteration/`.
-It uses the same transition logic on a smaller, structurally similar MDP:
+Run only Value Iteration:
 
 ```bash
-cd reduced_value_iteration
 python run_value_iteration.py
 ```
 
-## Output Files
+Progress bars are enabled by default. Use `--no_progress` for cleaner logs.
 
-Outputs are written to the `results/` directory.
+## Outputs
 
-Main model files:
-
-```text
-value_iteration_values.pkl
-value_iteration_policy.pkl
-sarsa_q.pkl
-sarsa_policy.pkl
-q_learning_q.pkl
-q_learning_policy.pkl
-```
-
-CSV logs and summaries:
+All outputs are written to:
 
 ```text
-value_iteration_log.csv
-sarsa_training_log.csv
-q_learning_training_log.csv
-evaluation_summary.csv
+results/
 ```
 
-Plots:
+Main output files:
 
 ```text
-q_learning_reward_curve.png
-sarsa_reward_curve.png
-reward_curve_comparison.png
-survival_rate_curve.png
-death_rate_curve.png
-policy_map_q_learning.png
-policy_map_sarsa.png
-policy_map_value_iteration.png
-trajectory_q_learning.png
-trajectory_sarsa.png
-trajectory_value_iteration.png
-oxygen_time_curve_q_learning.png
+reduced_value_iteration_values.pkl
+reduced_value_iteration_policy.pkl
+reduced_value_iteration_log.csv
+reduced_sarsa_q.pkl
+reduced_sarsa_training_log.csv
+reduced_q_learning_q.pkl
+reduced_q_learning_training_log.csv
+reduced_evaluation_summary.csv
 ```
 
-## Algorithms Implemented
+## Reference Result
 
-The project implements three core tabular methods:
+On the current 8x8 MDP, one representative run produced:
 
-- Value Iteration as the model-based Dynamic Programming baseline.
-- SARSA as the on-policy model-free control baseline.
-- Q-learning as the main off-policy model-free control method.
+```text
+Reachable states: 1,320,682
+Value Iteration iterations: 57
+```
 
-The Q-tables and V-tables are sparse dictionaries. Value Iteration discovers reachable states using BFS instead of allocating the full theoretical state space.
-
-## Result Summary Placeholder
-
-After running training and evaluation, fill this section with values from `results/evaluation_summary.csv`.
-
-Expected qualitative behavior:
-
-- Learned policies should outperform random behavior.
-- SARSA may learn a safer policy because it is on-policy.
-- Q-learning may learn a more reward-seeking policy because it bootstraps from greedy targets.
-- Value Iteration should provide a strong model-based reference when reachable-state computation is tractable.
-
-## Notes on Limitations
-
-The environment is intentionally discretized for tabular RL. Movement, oxygen, time, fish positions, and attacks are simplified compared with a continuous real game environment.
-
-Value Iteration can be computationally expensive because the reachable state space includes position, oxygen, global time, carried weight, and fish mask. If full Value Iteration is too slow, use the reduced configuration described in the project specification and clearly report that choice.
-
-The policy maps use a representative fixed state with full oxygen, full global time, zero carried weight, and all fish available. This is useful for visualization but does not show every possible resource condition.
+This version is intentionally smaller than the original full 11x11 design so
+exact tabular DP can be completed and compared fairly with SARSA and Q-learning
+on the same environment.

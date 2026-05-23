@@ -1,1 +1,1 @@
-"""Tabular reinforcement learning project for the Dave the Diver MDP."""
+"""Standalone reduced MDP used only for the Value Iteration baseline."""
