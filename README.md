@@ -18,6 +18,8 @@ RLDIVER/
   config.py
   env.py
   value_iteration.py
+  evaluation.py
+  plotting.py
   main.py
   algorithms/
     __init__.py
@@ -28,7 +30,8 @@ RLDIVER/
 
 `algorithms/q_learning.py` and `algorithms/sarsa.py` contain the model-free
 control implementations. `value_iteration.py` contains the Dynamic Programming
-baseline.
+baseline. `evaluation.py` and `plotting.py` generate the evaluation metrics and
+figures used in the results.
 
 ## MDP
 

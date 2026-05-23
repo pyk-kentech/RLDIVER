@@ -50,8 +50,8 @@ from config import (
     VALUE_ITERATION_THETA,
 )
 from env import ReducedUnderwaterFishingEnv, State
-from utils.evaluation import evaluate_policy, rollout_episode
-from utils.plotting import (
+from evaluation import evaluate_policy, rollout_episode
+from plotting import (
     plot_death_rate_curve,
     plot_oxygen_time_curve,
     plot_policy_map,
