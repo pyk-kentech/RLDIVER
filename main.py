@@ -390,7 +390,7 @@ def parse_args() -> argparse.Namespace:
         default="all",
         help="Which part of the experiment to run. Default: all.",
     )
-    parser.add_argument("--episodes", type=int, default=100000)
+    parser.add_argument("--episodes", type=int, default=500000)
     parser.add_argument("--eval_episodes", type=int, default=EVAL_EPISODES)
     parser.add_argument("--alpha", type=float, default=0.10)
     parser.add_argument("--gamma", type=float, default=GAMMA)

@@ -241,7 +241,7 @@ Important defaults are defined in `config.py` and `main.py`.
 | Initial epsilon | `1.0` |
 | Epsilon decay | `0.995` |
 | Minimum epsilon | `0.05` |
-| Training episodes | `100000` |
+| Training episodes | `500000` |
 | Evaluation episodes | `200` |
 | Value Iteration theta | `1e-6` |
 | Value Iteration max iterations | `1000` |
