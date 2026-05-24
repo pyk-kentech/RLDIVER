@@ -1,4 +1,4 @@
-"""Sparse Value Iteration for the reduced MDP."""
+"""Sparse Value Iteration for the final 8x8 tabular MDP."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def build_reachable_states(env, show_progress: bool = True) -> List[State]:
     visited = {initial_state}
     states: List[State] = []
 
-    progress = tqdm(desc="Reduced reachable-state BFS", unit="state", disable=not show_progress)
+    progress = tqdm(desc="Reachable-state BFS", unit="state", disable=not show_progress)
     try:
         while queue:
             state = queue.popleft()
@@ -64,7 +64,7 @@ def value_iteration(
     iterator = trange(
         1,
         max_iterations + 1,
-        desc="Reduced Value Iteration",
+        desc="Value Iteration",
         unit="iteration",
         disable=not show_progress,
     )

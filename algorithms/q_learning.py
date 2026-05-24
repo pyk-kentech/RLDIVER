@@ -92,7 +92,7 @@ def train_q_learning(
             state = next_state
             terminal_reason = info.get("terminal_reason")
 
-        death = terminal_reason in {"death", "failed_surface"}
+        death = terminal_reason in {"death", "failed_surface", "timeout_underwater"}
         log.append(
             {
                 "episode": episode,

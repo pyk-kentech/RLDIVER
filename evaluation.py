@@ -75,6 +75,7 @@ def rollout_episode(
         if render:
             renders.append(env.render_ascii(state))
 
+    all_fish_caught = fish_count == len(env.fish_by_id) and state[0:2] == (0, 0)
     death = terminal_reason in {"death", "failed_surface", "timeout_underwater"}
     return {
         "total_reward": total_reward,
@@ -87,7 +88,7 @@ def rollout_episode(
         "remaining_time": state[3],
         "survived": int(not death),
         "death": int(death),
-        "all_fish_caught": int(terminal_reason == "all_fish_caught"),
+        "all_fish_caught": int(all_fish_caught),
         "trajectory": trajectory,
         "oxygen_time": oxygen_time,
         "renders": renders,

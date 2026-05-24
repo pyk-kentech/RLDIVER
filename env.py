@@ -1,4 +1,4 @@
-"""Standalone reduced underwater environment for exact Value Iteration."""
+"""Final underwater fishing environment for the 8x8 tabular MDP."""
 
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ def remove_fish(mask: int, fish_id: int) -> int:
 
 
 class ReducedUnderwaterFishingEnv:
-    """Reduced finite MDP with the same dynamics as the full environment."""
+    """Finite tabular MDP for the underwater fishing task."""
 
     def __init__(self, stochastic: bool = True, seed: int = RANDOM_SEED):
         self.stochastic = stochastic
@@ -125,7 +125,7 @@ class ReducedUnderwaterFishingEnv:
         return valid_actions
 
     def render_ascii(self, state: Optional[State] = None) -> str:
-        """Render the reduced map as text."""
+        """Render the map as text."""
 
         if state is None:
             state = self.state

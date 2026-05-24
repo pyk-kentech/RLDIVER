@@ -64,7 +64,7 @@ def train_sarsa(
                 action = next_action
             terminal_reason = info.get("terminal_reason")
 
-        death = terminal_reason in {"death", "failed_surface"}
+        death = terminal_reason in {"death", "failed_surface", "timeout_underwater"}
         log.append(
             {
                 "episode": episode,
