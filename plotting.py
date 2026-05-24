@@ -201,7 +201,15 @@ def plot_trajectory(rollout: Mapping[str, Any], output_path: str | Path, title: 
     for fish in FISH_CONFIG:
         x, d = fish["position"]
         ax.scatter(x, d, marker="s", s=120, color="#f0a202", edgecolor="black", zorder=3)
-        ax.text(x, d, f"F{fish['id']}", ha="center", va="center", fontsize=8, zorder=4)
+        ax.text(
+            x + 0.12,
+            d - 0.12,
+            f"F{fish['id']}",
+            ha="left",
+            va="bottom",
+            fontsize=8,
+            zorder=5,
+        )
 
     trajectory = list(rollout.get("trajectory", []))
     if trajectory:
@@ -223,6 +231,7 @@ def plot_trajectory(rollout: Mapping[str, Any], output_path: str | Path, title: 
             s=130,
             color="#d62728",
             label="Catch",
+            zorder=4,
         )
         ax.legend()
 
