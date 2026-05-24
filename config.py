@@ -1,10 +1,4 @@
-"""Reduced configuration for a tractable Value Iteration baseline.
-
-This folder is intentionally separate from the full project. It keeps the same
-state variables and transition logic, but uses a smaller map, fewer fish, lower
-oxygen, and lower global time so exact tabular DP can finish on normal course
-servers.
-"""
+"""Configuration for the final 8x8 tabular diver MDP."""
 
 GRID_WIDTH = 8
 GRID_DEPTH = 8
@@ -33,8 +27,7 @@ EVAL_EPISODES = 200
 RANDOM_SEED = 42
 MAX_EPISODE_STEPS = 240
 
-# Four fish means a 4-bit availability mask. This is still much smaller than
-# the full 6-fish mask, but it preserves a meaningful capture-order problem.
+# Four fish means a 4-bit availability mask.
 INITIAL_FISH_MASK = 0b1111
 
 ACTION_UP = 0
