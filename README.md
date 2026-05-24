@@ -189,8 +189,8 @@ unsafe routing, and failure.
 | Invalid surface at base with zero weight | `-10` |
 | Catch fish | fish value times `1.0` |
 | Successful surface with positive carried weight | `50` |
-| Oxygen death | `-500` |
-| Failed surface | `-500` |
+| Oxygen death | `-1000` |
+| Failed surface | `-1000` |
 | Timeout underwater | additional `-100` |
 
 Movement has a small negative reward, so shorter efficient routes are preferred.
