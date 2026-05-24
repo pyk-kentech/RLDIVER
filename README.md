@@ -294,6 +294,10 @@ reduced_q_learning_training_log.csv
 reduced_evaluation_summary.csv
 ```
 
+The `reduced_` prefix is a legacy filename prefix from development. In this
+final submission, it refers to the final tractable 8x8 tabular environment, not
+to a separate environment.
+
 Plotting can also generate:
 
 ```text
