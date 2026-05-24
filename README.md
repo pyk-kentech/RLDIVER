@@ -434,17 +434,15 @@ Reachable states: 1,320,682
 Value Iteration iterations: 57
 ```
 
-This version is intentionally smaller than the original full 11x11 design so
-exact tabular DP can be completed and compared fairly with SARSA and Q-learning
-on the same environment.
+This 8x8 version is the final project environment. It is sized so exact tabular
+DP can be completed and compared fairly with SARSA and Q-learning on the same
+environment.
 
 ## Reproducibility Checklist
 
-From a fresh clone:
+From the project directory:
 
 ```bash
-git clone https://github.com/pyk-kentech/RLDIVER.git
-cd RLDIVER
 pip install -r requirements.txt
 python main.py --mode all
 ```
