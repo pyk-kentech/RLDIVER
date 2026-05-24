@@ -429,14 +429,17 @@ These commands check that the environment, algorithms, evaluation, and plotting
 pipeline run correctly. The short Value Iteration command is only a smoke test;
 it is not intended to produce a converged DP policy.
 
-## Reference Result
+## Reference Run Information
 
-On the current 8x8 MDP, one representative run produced:
+On the current 8x8 MDP, reachable-state BFS discovers:
 
 ```text
 Reachable states: 1,320,682
-Value Iteration iterations: 57
 ```
+
+The exact Value Iteration iteration count is printed during execution and saved
+to `results/reduced_value_iteration_log.csv`. It depends on the current reward
+values, discount factor, convergence threshold, and maximum iteration setting.
 
 This 8x8 version is the final project environment. It is sized so exact tabular
 DP can be completed and compared fairly with SARSA and Q-learning on the same
